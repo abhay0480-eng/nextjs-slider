@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
 html,
 body {
   padding: 0;
@@ -13,4 +19,47 @@ a {
 
 * {
   box-sizing: border-box;
+}
+.noUi-target.noUi-horizontal {
+  height: 10px;
+  border: 1px solid #ddd !important;
+  box-shadow: none;
+  margin-top: 5px;
+  background: #fff;
+}
+
+.noUi-connect {
+  background: #000000 !important;
+}
+
+.noUi-horizontal .noUi-handle {
+  width: 15px !important;
+  height: 15px !important;
+  left: -12px;
+  top: -4px !important;
+  background: #000000;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: none;
+  border-radius: 36px;
+  position: absolute;
+  z-index: 10;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.noUi-handle::after {
+  content: "";
+  display: none !important;
+  
+}
+.noUi-handle::before {
+  content: "";
+  display: none !important;
+  
+}
+
+html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
+  right: -14px !important;
+  left: auto;
 }

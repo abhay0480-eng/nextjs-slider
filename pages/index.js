@@ -1,8 +1,82 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import Image from 'next/image'
+import Nouislider from "nouislider-react";
+import "nouislider/distribute/nouislider.css";
+import React from 'react'
 
-export default function Home() {
+export default function Home({ndata}) {
+  console.log( ndata)
+
+  var priceRangeArr = [];
+    for (var e = '', t = [[100, 100], [2500, 500], [1e4, 1e3], [2e4, 2e3], [4e4, 5e3], [1e5, 1e4], [2e5, 5e4], [4e5, 1e5], [parseInt(ndata.price_to) ]], i = parseInt(ndata.price_from) , a = 0; a < t.length - 1; i += t[a][1]){
+        priceRangeArr.push(i.toFixed(2)), i >= t[a + 1][0] && a++;
+    }                  	
+    priceRangeArr[priceRangeArr.length - 1] = price_to.toFixed(2);
+
+    var price_array = [];
+    const priceOptions = []
+    var price_step = 100 / (priceRangeArr.length - 1);
+    priceRangeArr.map((element,index) =>{
+        priceOptions.push(<option key={index} value={parseFloat(element)}>£{numberWithCommas(parseInt(element))}</option>)
+        if(index == 0){
+            price_array["min"] = parseFloat(price_from);
+        }else if(index == priceRangeArr.length - 1){
+            price_array["max"] = parseFloat(price_to);
+        }else{
+            price_array[(price_step * index).toFixed(2)+'%'] = parseFloat(element);
+        }
+    })
+
+    //convert array to object			
+    const priceArr = JSON.parse(JSON.stringify(Object.assign({}, price_array)));
+
+let [flag, setflag] = React.useState(false)
+  function show(){
+    setflag(pre => !pre)
+  }
+//  let body = { shape:[],
+//         filter_price_min:price_from,
+//         filter_price_max:price_to,
+//         filter_carat_min:carat_from,
+//         filter_carat_max:carat_to,
+//         filter_cut_min:0,
+//         filter_cut_max:4,
+//         filter_color_min:0,
+//         filter_color_max:10,
+//         filter_clarity_min:0,
+//         filter_clarity_max:9,
+//         filter_fluorescence_min:0,
+//         filter_fluorescence_max:4,
+//         filter_symmerty_min:0,
+//         filter_symmerty_max:5,
+//         filter_polish_min:0,
+//         filter_polish_max:5,
+//         filter_table_min:parseFloat(filters.table_percent_from),
+//         filter_table_max:parseFloat(filters.table_percent_to),
+//         filter_depth_min:parseFloat(filters.depth_percent_from),
+//         filter_depth_max:parseFloat(filters.depth_percent_to),
+//         lab:[],
+//         origin:'All',
+//         sorting_order:'ASC',
+//         sort_by:'fame_price',
+//         page_offset:1,
+//         search_ID:''}
+
+
+  let shapes = ['round','princess','cushion','asscher','marquise','oval','radiant','pear','emerald','heart']
+  let  s = shapes.map(item => {
+   return(
+   <div className=''>
+      <Image
+          src = {`/images/shapes/${item}.png`}
+          width={30}
+          height={30}
+          alt="Picture of the author"
+        />
+   </div>
+   ) 
+ })
   return (
     <div className={styles.container}>
       <Head>
@@ -11,59 +85,321 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      <div>   
+     <Image
+      src='/images/Flawless-Logo.png'
+      alt="Picture of the author"
+      width={300}
+      height={100}
+    />
+   </div>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+   <div className='mx-auto flex w-[60%] justify-between'>
+     <div className='w-[47%]'>
+       <div className='flex items-center mt-[30px]'>
+         <div>SHAPE</div>
+         <div className='ml-[30px] flex w-[100%] justify-between'>{s}</div>
+           
+       </div>
+       <div className='flex justify-between mt-[50px]'>
+       <div>CARAT</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider 
+       range={{ 'min': [parseInt(ndata.size_from)],
+      '14%': [1, 0.02],
+      '28%': [2, 0.05],
+      '42%': [3, 0.10],
+      '56%': [4, 0.25],
+      '70%': [5, 0.50],
+      '84%': [10, 5],
+      '98%': [20, 10],
+      'max': [30.00] }}
+       start={[parseInt(ndata.size_from), parseInt(ndata.size_to)]}
+       tooltips= {[true,true]}
+      connect 
+       />
+       <div className='flex justify-between mt-[20px]'>
+       <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+       </div>
+       </div>
+     </div>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+     <div className='flex justify-between mt-[50px]'>
+       <div>COLOR</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider range={{ min: 0, max: 100 }} start={[20, 80]} connect />
+       <div className='flex justify-between mt-[20px]'>
+       <div>M</div>
+       <div>L</div>
+       <div>K</div>
+       <div>J</div>
+       <div>I</div>
+       <div>H</div>
+       <div>G</div>
+       <div>F</div>
+       <div>E</div>
+       <div>D</div>
+       </div>
+       </div>
+     </div>
+       
+     </div>
+     <div className='w-[47%]'>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+     <div className='flex justify-between mt-[30px]'>
+       <div>PRICE</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider 
+       range={priceArr}
+       start={[parseInt(ndata.price_total_from_in_currency), parseInt(ndata.price_total_to_in_currency)]}
+       tooltips= {[true,true]}
+      connect 
+       />
+       <div className='flex justify-between mt-[20px]'>
+       <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+       </div>
+       </div>
+     </div>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+     <div className='flex justify-between mt-[30px]'>
+       <div>CUT</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider range={{ min: 0, max: 100 }} start={[20, 80]} connect />
+       <div className='flex justify-between mt-[20px]'>
+       <div>Excellent</div>
+       <div>Very Good</div>
+       <div>Good</div>
+       <div>Fair</div>
+       </div>
+       </div>
+     </div>
+       
+     <div className='flex justify-between mt-[30px]'>
+       <div>Price</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider range={{ min: 0, max: 100 }} start={[20, 80]} connect />
+       <div className='flex justify-between mt-[20px]'>
+       <div>I1</div>
+       <div>SI3</div>
+       <div>SI2</div>
+       <div>SI1</div>
+       <div>VS2</div>
+       <div>VS1</div>
+       <div>VVS2</div>
+       <div>VVS1</div>
+       <div>IF</div>
+       </div>
+       </div>
+     </div>
+      
+     </div>
+   </div>
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+<div ><button className='mx-auto block mt-[50px] mb-[50px]'  onClick={show}>advance filter</button></div>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+
+   {(flag===true) && <div className='mx-auto flex w-[60%] justify-between'>
+     <div className='w-[47%]'>
+       
+       <div className='flex justify-between mt-[30px]'>
+       <div>FLUOR</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider 
+       range={{ 'min': [parseInt(ndata.size_from)],
+      '14%': [1, 0.02],
+      '28%': [2, 0.05],
+      '42%': [3, 0.10],
+      '56%': [4, 0.25],
+      '70%': [5, 0.50],
+      '84%': [10, 5],
+      '98%': [20, 10],
+      'max': [30.00] }}
+       start={[parseInt(ndata.size_from), parseInt(ndata.size_to)]}
+       tooltips= {[true,true]}
+      connect 
+       />
+       <div className='flex justify-between mt-[20px]'>
+       
+       <div>Strong</div>
+       <div>Medium</div>
+       <div>Faint</div>
+       <div>None</div>
+       </div>
+       </div>
+     </div>
+
+     <div className='flex justify-between mt-[30px]'>
+       <div>SYMM</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider range={{ min: 0, max: 100 }} start={[20, 80]} connect />
+       <div className='flex justify-between mt-[20px]'>
+       <div>M</div>
+       <div>L</div>
+       <div>K</div>
+       <div>J</div>
+       <div>I</div>
+       <div>H</div>
+       <div>G</div>
+       <div>F</div>
+       <div>E</div>
+       <div>D</div>
+       </div>
+       </div>
+     </div>
+
+     <div className='flex justify-between mt-[30px]'>
+       <div>TABLE</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider 
+       range={{ 'min': [100],
+      '14%': [2500, 500],
+      '28%': [10000, 1000],
+      '42%': [20000, 2000],
+      '56%': [40000, 5000],
+      '70%': [100000, 10000],
+      '84%': [200000, 50000],
+      '98%': [400000, 100000],
+      'max': [900000] }}
+       start={[parseInt(ndata.price_total_from_in_currency), parseInt(ndata.price_total_to_in_currency)]}
+       tooltips= {[true,true]}
+      connect 
+       />
+       <div className='flex justify-between mt-[20px]'>
+       <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+       </div>
+       </div>
+     </div>
+       
+     </div>
+     <div className='w-[47%]'>
+
+     <div className='flex justify-between mt-[30px]'>
+       <div>REPORT</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider 
+       range={{ 'min': [100],
+      '14%': [2500, 500],
+      '28%': [10000, 1000],
+      '42%': [20000, 2000],
+      '56%': [40000, 5000],
+      '70%': [100000, 10000],
+      '84%': [200000, 50000],
+      '98%': [400000, 100000],
+      'max': [900000] }}
+       start={[parseInt(ndata.price_total_from_in_currency), parseInt(ndata.price_total_to_in_currency)]}
+       tooltips= {[true,true]}
+      connect 
+       />
+       <div className='flex justify-between mt-[20px]'>
+       <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <select name="cars" id="cars">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+       </div>
+       </div>
+     </div>
+
+     <div className='flex justify-between mt-[30px]'>
+       <div>CUT</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider range={{ min: 0, max: 100 }} start={[20, 80]} connect />
+       <div className='flex justify-between mt-[20px]'>
+       <div>Excellent</div>
+       <div>Very Good</div>
+       <div>Good</div>
+       <div>Fair</div>
+       </div>
+       </div>
+     </div>
+       
+     <div className='flex justify-between mt-[30px]'>
+       <div>POLISH</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider range={{ min: 0, max: 100 }} start={[20, 80]} connect />
+       <div className='flex justify-between mt-[20px]'>
+       <div>I1</div>
+       <div>SI3</div>
+       <div>SI2</div>
+       <div>SI1</div>
+       <div>VS2</div>
+       <div>VS1</div>
+       <div>VVS2</div>
+       <div>VVS1</div>
+       <div>IF</div>
+       </div>
+       </div>
+     </div>
+
+     <div className='flex justify-between mt-[30px]'>
+       <div>DEPTH</div>
+       <div className='w-[100%] ml-[20px]'>
+       <Nouislider range={{ min: 0, max: 100 }} start={[20, 80]} connect />
+       <div className='flex justify-between mt-[20px]'>
+       <div>I1</div>
+       <div>SI3</div>
+       <div>SI2</div>
+       <div>SI1</div>
+       <div>VS2</div>
+       <div>VS1</div>
+       <div>VVS2</div>
+       <div>VVS1</div>
+       <div>IF</div>
+       </div>
+       </div>
+     </div>
+      
+     </div>
+   </div>}
+
     </div>
   )
+}
+
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const res = await fetch(`http://gems.netfillip.org/public/getfilter`)
+  const ndata = await res.json()
+
+  return { props: { ndata } }
 }
