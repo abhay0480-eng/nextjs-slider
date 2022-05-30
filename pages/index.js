@@ -3,8 +3,10 @@ import styles from '../styles/Home.module.css'
 import Image from 'next/image'
 import Nouislider from "nouislider-react";
 import "nouislider/distribute/nouislider.css";
-import React, {useState} from 'react'
-import { data } from 'autoprefixer';
+import React, {useState,useEffect} from 'react'
+
+
+
 
 const numberWithCommas = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -56,11 +58,49 @@ var priceRangeArr = [];
     })
 
     //convert array to object			
-    const priceArr = JSON.parse(JSON.stringify(Object.assign({}, price_array)));  
+const priceArr = JSON.parse(JSON.stringify(Object.assign({}, price_array)));  
 
-export default function Home({ndata}) {
+const ISSERVER = typeof window === "undefined";
+
+
+    
   
+
+
+
+
+export default function Home({ ndata }) {
+  const initialRender = React.useRef(true);
   
+  let d = {
+    pLeft: ndata.price_total_from_in_currency,
+      pRight: ndata.price_total_to_in_currency,
+        cLeft: ndata.size_from,
+          cRight: ndata.size_to,
+            cutLeft: 0,
+              cutRight: 4,
+                colorLeft: 0,
+                  colorRight: 10,
+                    clarityLeft: 0,
+                      clarityRight: 9,
+                        fluorLeft: 0,
+                          fluorRight: 4,
+                            symmLeft: 0,
+                              symmRight: 5,
+                                polishLeft: 0,
+                                  polishRight: 5,
+                                    tableLeft: 0,
+                                      tableRight: 88,
+                                        depthLeft: 0,
+                                          depthRight: 106.60,
+                                            report: [],
+                                              locate: [],
+                                                shapes: []
+  }
+
+
+   
+
   
 let [flag, setflag] = useState(false)
   function show(){
@@ -68,52 +108,70 @@ let [flag, setflag] = useState(false)
   }
 
 
-  let [Data, setData] = useState({
-    pLeft: ndata.price_total_from_in_currency,
-    pRight:ndata.price_total_to_in_currency,
-    cLeft: ndata.size_from,
-    cRight: ndata.size_to,
-    cutLeft: 0,
-    cutRight: 4,
-    colorLeft: 0,
-    colorRight: 10,
-    clarityLeft: 0,
-    clarityRight: 9,
-    fluorLeft: 0,
-    fluorRight: 4,
-    symmLeft: 0,
-    symmRight: 5,
-    polishLeft: 0,
-    polishRight: 5,
-    tableLeft: 0,
-    tableRight: 88,
-    depthLeft: 0,
-    depthRight: 106.60,
-  
-    report: [],
-    locate:[]
-  })
+//   () => {
+//     const localDat = JSON.parse(localStorage.getItem("items")) ;
+//     return localDat? localDat:{}
+// }
+// const items = JSON.parse(localStorage.getItem('items'));
+  let [Data, setData] = useState(d)
 
-  function flip(item,arr) {
-    console.log(item)
-    console.log(arr)
+ 
+ 
+
   
-    setData(prevData => (arr.includes(item)?{
+  useEffect(() => {  
+  if (typeof window !== "undefined") {
+    setData(localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : d)
+    console.log("hii")
+  }
+  }, []);
+  
+  
+  // useEffect(() => {
+
+  //   if (typeof window === "undefined") { 
+  //     localStorage.getItem('items')?localStorage.setItem('items', JSON.stringify(Data)):console.log("pop")
+  //   }
+
+  // }, [Data]);
+  
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      localStorage.setItem('items', JSON.stringify(Data))
+      console.log("pop")
+    }
+    },[Data]);
+    
+  
+
+  
+
+  function flip(item, arr) {
+    
+    setData(prevData => (prevData[arr].includes(item)?{
       ...prevData,
-     [arr]: [...prevData.arr.slice(0, arr.indexOf(item)),...prevData.arr.slice( arr.indexOf(item)+1)]
+     [arr]: [...prevData[arr].slice(0, prevData[arr].indexOf(item)),...prevData[arr].slice( prevData[arr].indexOf(item)+1)]
+      // [arr]: prevData[arr].splice(prevData[arr].indexOf(item),1)
     }:{ ...prevData,
-      [arr]: [...prevData.arr, item]
+      [arr]: [...prevData[arr], item]
     }))
-    console.log(arr.indexOf(item))
+    
+
+    
   }
 
+
+
   function handleChange(l, r, event) {
-    console.log(event)
-    setData((prevData) => ({
+
+     setData((prevData) => ({
       ...prevData,
       [l]: event[0],
       [r]: event[1]
-    }))
+     }))
+    
   }
 
   function handle(p, event) {
@@ -122,20 +180,23 @@ let [flag, setflag] = useState(false)
       ...prevData,
       [p]: (value)
     }))
+
   }
-console.log(Data.report)
+
 
   let shapes = ['round','princess','cushion','asscher','marquise','oval','radiant','pear','emerald','heart']
   let  s = shapes.map(item => {
    return(
-   <div className=''>
+   <div className={`w-[70px] inline-block text-center cursor-pointer ${Data.shapes.includes(item)?"border-black border ":" none"}`}>
       <Image
           src = {`/images/shapes/${item}.png`}
           width={30}
           height={30}
-          alt="Picture of the author"
+         alt="Picture of the author"
+         onClick={() => flip(item,"shapes")}
         />
-   </div>
+     </div>
+     
    ) 
  })
   return (
@@ -159,7 +220,7 @@ console.log(Data.report)
      <div className='w-[47%]'>
        <div className='flex items-center mt-[30px]'>
          <div>SHAPE</div>
-         <div className='ml-[30px] flex w-[100%] justify-between'>{s}</div>
+         <div className='ml-[10px] flex w-[100%] justify-between'>{s}</div>
            
        </div>
        <div className='flex justify-between mt-[50px]'>
@@ -427,8 +488,8 @@ console.log(Data.report)
        <div>LOCATE</div>
        <div className='w-[100%] ml-[20px]'>
       
-              <span className='inline-block w-[80px]  border border-black bg-white text-center py-[3px] mr-[4px] cursor-pointer '>ALL</span>
-              <span className='inline-block w-[80px]  border border-black bg-white text-center py-[3px] mr-[4px] cursor-pointer '>UK</span>
+              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.locate.includes("ALL")?"bg-black text-white":"bg-white text-black"}`} onClick={() => flip("ALL","locate")}>ALL</span>
+              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.locate.includes("UK")?"bg-black text-white":"bg-white text-black"}`} onClick={() => flip("UK","locate")}>UK</span>
               
               
        </div>
@@ -441,9 +502,9 @@ console.log(Data.report)
        <div>REPORT</div>
        <div className='w-[100%] ml-[20px]'>
       
-              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.report.includes("GIA")?"bg-black text-white":"bg-white text-black"}`} onClick={e => flip("GIA",Data["report"],"report",e)}>GIA</span>
-              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.report.includes("IGI")?"bg-black text-white":"bg-white text-black"}`} onClick={e => flip("IGI",Data["report"],"report",e)}>IGI</span>
-              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.report.includes("AGS")?"bg-black text-white":"bg-white text-black"}`} onClick={e => flip("AGS",Data["report"],"report",e)}>AGS</span>
+              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.report.includes("GIA")?"bg-black text-white":"bg-white text-black"}`} onClick={() => flip("GIA","report")}>GIA</span>
+              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.report.includes("IGI")?"bg-black text-white":"bg-white text-black"}`} onClick={() => flip("IGI","report")}>IGI</span>
+              <span className={`w-[70px] py-[5px] border border-black inline-block text-center mr-[4px] cursor-pointer ${Data.report.includes("AGS")?"bg-black text-white":"bg-white text-black"}`} onClick={() => flip("AGS","report")}>AGS</span>
               
        </div>
      </div>
